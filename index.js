@@ -7,7 +7,9 @@ app.use(express.json());
 
 app.post('/pesquisar', async (req, res) => {
   const { marca } = req.body;
-  if (!marca) return res.status(400).json({ error: 'Informe a marca.' });
+  if (!marca) {
+    return res.status(400).json({ error: 'Informe a marca.' });
+  }
 
   const browser = await puppeteer.launch({
     headless: true,
@@ -16,9 +18,11 @@ app.post('/pesquisar', async (req, res) => {
   const page = await browser.newPage();
 
   try {
-    await page.goto('https://busca.inpi.gov.br/MarcaPrincipal/', { waitUntil: 'networkidle2' });
-    await page.waitForSelector('#marcasForm\\:inputTextoBusca', { timeout: 10000 });
+    await page.goto('https://busca.inpi.gov.br/MarcaPrincipal/', {
+      waitUntil: 'networkidle2'
+    });
 
+    await page.waitForSelector('#marcasForm\\:inputTextoBusca', { timeout: 10000 });
     await page.type('#marcasForm\\:inputTextoBusca', marca);
     await page.click('#marcasForm\\:btBuscar');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
